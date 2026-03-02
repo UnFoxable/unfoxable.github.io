@@ -1,0 +1,67 @@
+html {
+    background-color: beige;
+}
+
+/* Movie Display */
+.card {
+    border: 1px solid black;
+    border-radius: 15px;
+    background-color: #151f30;
+    max-width: 250px;
+    max-height: 330px;
+}
+.row {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+    margin: 8px;
+}
+.column {
+    display: flex;
+}
+img {
+    width: 90%;
+    height: 80%;
+    border-radius: 15px;
+    border-bottom: 1px solid black;
+    margin-top: 5%;
+}
+h3 {
+    margin: 12px;
+    color: white;
+}
+
+/* topNav bar */
+.topnav {
+    margin-bottom: 8px;
+    display: flex;
+    overflow: hidden;
+}
+.topnav a {
+    float: left;
+    color: black;
+    text-align: center;
+    text-decoration: none;
+    font-size: 1.5em;
+}
+#query {
+    background-color: #151f30;
+    width: 100%;
+    height: 100%;
+    border-radius: 8px;
+    border: 2px solid black;
+    color: white;
+}
+.searchContainer {
+    float: right;
+    margin: auto 0px auto auto;
+}
+form {
+    height: 30px;
+    width: 600px;
+}
+::placeholder {
+    color: beige;
+    opacity: 0.6;
+}
