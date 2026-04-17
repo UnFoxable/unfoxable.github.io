@@ -1,0 +1,83 @@
+p {
+  font-family: Helvetica;
+  color: lightseagreen;
+  margin-bottom: 100px;
+}
+.Traffic-Cone {
+  font-family: "Germania One", system-ui;
+  font-weight: 400;
+  font-style: normal;
+  color: yellow;
+  background-color: black;
+  border: 1px solid lightcyan;
+  margin-bottom: 16px;
+}
+h1 {    
+  color: whitesmoke;
+  text-align: center;
+  font-size:25px;
+  line-height: 2;
+  letter-spacing: 0.5px;
+  margin: 0px;
+  padding: 15px 0px;
+  text-shadow: 3px 3px 1px black;
+}
+/* Germania One Regular = G1R = Glore (Font Type)*/
+.glore {
+  font-family: "Germania One", system-ui;
+  font-weight: 400;
+  font-style: normal;
+}
+/* Input Widths for Input Box and Button */
+.InputWidth1 {
+  width: 62px;
+}
+.InputWidth2 {
+  width: 70px;
+}
+/* body & dividers */
+body {
+  gap: 0px;
+}
+.divContainer {
+  display: flex;
+  gap: 8px;
+}
+#divider1 {
+  background-color: darkslateblue;
+  margin: 0;
+  width: 800px;
+  padding: 0px 20px 20px 20px;
+  border: 3px solid black;
+}
+#divider2 {
+  background-color: darkslateblue;
+  margin: 0;
+  width:600px;
+  padding: 0px 20px 20px 20px;
+  border: 3px solid black;
+  margin-right: 0;
+  margin-left: auto;
+}
+#divider3 {
+  background-color: darkslateblue;
+  margin: 8px;
+  margin-left: 0px;
+  width:600px;
+  padding: 0px 20px 20px 20px;
+  border: 3px solid black;
+}
+/* others */
+img {
+  display: block;
+  margin: 0px;
+  float: right;
+  max-width: 600px;
+}
+html {
+  background-color: darkslategray;
+}
+.done {
+  text-decoration: line-through solid black;
+  text-decoration-thickness: 2px;
+}

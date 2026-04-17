@@ -1,0 +1,142 @@
+* {
+    margin: 0px;
+}
+head {
+    display: none;
+}
+html {
+    background-color: #E6E6FA;
+}
+
+
+/* Navbar, Banner and Main Content */
+.MainContent {
+    display: flex;
+    flex-direction: column;
+    align-content: center;
+    max-width: 80%;
+    margin-left: 10%;
+    margin-right: 10%;
+}
+.NavContainer {
+    display: flex;
+    flex-direction: column;
+    width: 100%;
+    margin: 0px;
+}
+
+.Banner {
+    display: flex;
+}
+.Banner img{
+    width: 100%;
+}
+
+.NavBar {
+    border-top: 2px solid black;
+    border-bottom: 2px solid black;
+    background-color: rgb(16, 82, 16);
+    height: 55px;
+    align-content: center;
+}
+.NavBar a{
+    text-decoration: none;
+    margin: 10px;
+    color: #E6E6FA;
+}
+.NavBar img{
+    float: right;
+    max-height: 6vw;
+    background-color: white;
+}
+
+/* Title */
+h1, h2 {
+    text-align: center;
+}
+
+/* Wheel of Purple */
+/* #pwheel {
+    position: static;
+    background: black;
+    height: 45vw;
+    max-width: 100%;
+    margin-bottom: 5vw;
+} */
+
+#pbutton {
+    display: flex;
+    flex-direction: column;
+    align-self: center;
+    vertical-align: middle;
+    line-height: 2vw;
+    margin-top: 2vw;
+    margin-bottom: 15vw;
+    font-size: 1.5vw;
+    cursor: pointer;
+    border-radius: 20px;
+    border: 2.5px solid black;
+    height: 2.5vw;
+}
+
+#pbutton:hover {
+    background-color: purple;
+    color:#E6E6FA;
+}
+
+/* Canvas */
+#canvas1 {
+    position: static;
+    background: black;
+    height: 45vw;
+    max-width: 100%;
+    margin-bottom: 5vw;
+}
+
+/* Youtube */
+.yt {
+    border: 2px solid black;
+    border-radius: 15px;
+    margin-bottom: 5vw;
+}
+
+#cicadab {
+    display: block;
+    flex-direction: column;
+    align-self: center;
+    font-size: large;
+    cursor: pointer;
+    border-radius: 5px;
+    height: 25px;
+    border-top-right-radius: 0px;
+    border-bottom-right-radius: 0px;
+    margin-right: -1px;
+    border-right-width: 4px;
+}
+
+#snakeEyesb {
+    display: block;
+    flex-direction: column;
+    align-self: center;
+    font-size: large;
+    cursor: pointer;
+    border-radius: 5px;
+    height: 25px;
+    border-top-left-radius: 0px;
+    border-bottom-left-radius: 0px;
+    margin-left: -1px;
+    border-left-width: 0px;
+}
+
+#cicadab:hover {
+    background-color: lightgrey;
+}
+#snakeEyesb:hover {
+    background-color: lightgrey;
+}
+
+#ytButton {
+    display: flex;
+    flex-direction: row;
+    align-self: center;
+}
