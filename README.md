@@ -1,5 +1,6 @@
 # unfoxable.github.io
 
-unfoxable.github.io/ScriptsforScripts
-unfoxable.github.io/MovieReview
-unfoxable.github.io/CS50xPage_7
+- Paths -\
+[ScriptsforScripts](unfoxable.github.io/ScriptsforScripts)\
+[MovieReview](unfoxable.github.io/MovieReview)\
+[CS50x](unfoxable.github.io/CS50xPage_7)\
