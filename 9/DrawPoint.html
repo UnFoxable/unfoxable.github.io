@@ -15,12 +15,17 @@
   </div>
   <div class="tools" id="toolbar">
     <span>
-      <input class="item" id="pickcolour" value="#ffffff" type="color">
+      <input class="item input" id="pickcolour" value="#ffffff" type="color">
       <button class="item">Colour</button>
     </span>
-    <button class="item" id="width">Width</button>
-    <button class="item" id="size">Size</button>
+    <input class="item" id="inptwidth" placeholder="3px" type="number">
+    <button class="item" id="download">Download*</button>
+    <button class="item" id="import">Import*</button>
     <button class="item" id="clear" onclick="trash()">Clear</button>
+    <span class="item">
+      <label class="sized" for="size">Size</label>
+      <input class="sized" id="size" type="range" min="-2" max="2" step="any" value="1">
+    </span>
   </div>
 <script src="./Javascript9.js" type="text/javascript"></script>
 </body>
