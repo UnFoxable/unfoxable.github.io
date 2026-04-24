@@ -6,8 +6,18 @@ var rctx = rcanvas.getContext('2d', {alpha: true, willReadFrequently: true});
 console.log(rctx.getContextAttributes());
 
 rctx.imageSmoothingEnabled = true;
-var intsize = 2;
+var ogintsize = 3;
+var intsize = ogintsize;
 resize();
+
+//about size variable
+//size variable has 3 types: size, intsize, ogintsize
+//ogintsize is used to calc the mousemovement to canvas/size ratio
+//#stores the original value
+//intsize is used to adjust other values based on canvas/size ratio
+//#stores the size in integer format
+//size is for adjusting the size of the canvas/screen ratio
+//#stores the size in multiplication (0.25, 0.5, 1, 2, 4)
 
 var nextline = [];
 function draw() {
@@ -31,13 +41,17 @@ function draw() {
     mouseX = chaikinsh(points[0],mouseX)
     mouseY = chaikinsh(points[1],mouseY)
 
-    rctx.moveTo(nextline[0], nextline[1]);
-    // rctx.quadraticCurveTo(points[0][1], points[1][1], points[0][0], points[1][0])
-    // rctx.moveTo(points[0][0], points[1][0]);
-
-    rctx.lineTo(points[0][1], points[1][1]);
-    rctx.moveTo(points[0][1], points[1][1]);
-    rctx.lineTo(points[0][0], points[1][0]);
+    if (smthtype == 0) {
+        rctx.moveTo(nextline[0], nextline[1]);
+        rctx.lineTo(points[0][1], points[1][1]);
+        rctx.moveTo(points[0][1], points[1][1]);
+        rctx.lineTo(points[0][0], points[1][0]);
+    } else if (smthtype == 1) {
+        rctx.moveTo(nextline[0], nextline[1]);
+        rctx.quadraticCurveTo(points[0][1], points[1][1], points[0][0], points[1][0])
+        rctx.moveTo(points[0][0], points[1][0]);
+    }
+    
 
     nextline[0] = points[0][0];
     nextline[1] = points[1][0];
@@ -80,6 +94,10 @@ document.querySelector('#sizeS').addEventListener('click', (e) => {
     display();
 })
 
+var smthtype = 0;
+document.querySelector('#smthtype').addEventListener('input', (e) => {
+    smthtype = document.querySelector('#smthtype').value
+})
 
 // stamp different shapes
 function stamp(type, size) {
@@ -122,8 +140,8 @@ window.addEventListener('mousemove', (e) => {
 
     // mouseState = 1;
     //
-    mouseX[0] = e.clientX*(size/size/size)*(intsize/(intsize*0.5));
-    mouseY[0] = e.clientY*(size/size/size)*(intsize/(intsize*0.5));
+    mouseX[0] = e.clientX*(size/size/size)*(intsize/(intsize*(1/ogintsize)));
+    mouseY[0] = e.clientY*(size/size/size)*(intsize/(intsize*(1/ogintsize)));
 
     // for (var i=3;i>0;i--) {
     //     mouseX[i] = mouseX[i-1];
