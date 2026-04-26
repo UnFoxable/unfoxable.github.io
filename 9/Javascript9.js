@@ -19,6 +19,8 @@ resize();
 //size is for adjusting the size of the canvas/screen ratio
 //#stores the size in multiplication (0.25, 0.5, 1, 2, 4)
 
+
+//nextline is the previously recorded line
 var nextline = [];
 function draw() {
     color = document.querySelector('#pickcolour').value;
@@ -33,23 +35,23 @@ function draw() {
 
     rctx.beginPath();
 
-    if (smthtype == 0 || smthtype == 1) {
-            var points = [[],[]]
-            //points[0] == X
-            //      [1] == Y
-
-            mouseX = chaikinsh(points[0],mouseX)
-            mouseY = chaikinsh(points[1],mouseY)
+    if (smthtype <= 1) {
+        //Chaikin's Algoritm
+        var points = [[],[]]
+        //points[0] == X
+        //      [1] == Y
+        mouseX = chaikinsh(points[0],mouseX)
+        mouseY = chaikinsh(points[1],mouseY)
 
         if (smthtype == 0) {
-            //Chaikin's Algoritm
+            //Chaikin's Algorithm Pure
             rctx.moveTo(nextline[0], nextline[1]);
             rctx.lineTo(points[0][1], points[1][1]);
             rctx.moveTo(points[0][1], points[1][1]);
             rctx.lineTo(points[0][0], points[1][0]);
 
         } else if (smthtype == 1) {
-            //quadratic Curve (bezier Curve)
+            //C.Algo + quadratic Curve (bezier Curve)
             rctx.moveTo(nextline[0], nextline[1]);
             rctx.quadraticCurveTo(points[0][1], points[1][1], points[0][0], points[1][0])
             rctx.moveTo(points[0][0], points[1][0]);
@@ -58,24 +60,30 @@ function draw() {
             nextline[0] = points[0][0];
             nextline[1] = points[1][0];
 
-    } else if (smthtype = 2) {
-        //normal lines
-        rctx.moveTo(nextline[0], nextline[1]);
+    } else if (smthtype >= 2) {
+        if (smthtype == 2) {
+            //normal lines
+            rctx.moveTo(nextline[0], nextline[1]);
 
-        rctx.lineTo(mouseX[1], mouseY[1]);
-        rctx.moveTo(mouseX[1], mouseY[1]);
-        rctx.lineTo(mouseX[0], mouseY[0]);
+            rctx.lineTo(mouseX[1], mouseY[1]);
+            rctx.moveTo(mouseX[1], mouseY[1]);
+            rctx.lineTo(mouseX[0], mouseY[0]);
 
-        nextline[0] = mouseX[0];
-        nextline[1] = mouseY[0];
+            nextline[0] = mouseX[0];
+            nextline[1] = mouseY[0];
+        } else if (smthtype == 3) {
+            //normal quadratic curve
+            rctx.moveTo(nextline[0], nextline[1]);
+            rctx.quadraticCurveTo(mouseX[1], mouseY[1], mouseX[0], mouseY[0])
+            rctx.moveTo(mouseX[0], mouseY[0]);
+            nextline[0] = mouseX[0];
+            nextline[1] = mouseY[0];
+        }
     }
 
 
     rctx.closePath()
     rctx.stroke()
-    display()
-
-    resizestore = rctx.getImageData(0, 0, dwidth, dheight);
 
     function chaikinsh(points, temp) {
         points[0] = (temp[0] * (3/4)) + (temp[1] * (1/4))
@@ -104,35 +112,31 @@ window.addEventListener('keydown', function (e) {
 // copy from rcanvas to dcanvas
 var size = ogsize;
 var coords = [];
-coords[0] = 0;
-coords[1] = 0;
+coords[0] = rwidth/2*-1;
+coords[1] = rheight/2*-1;
 display();
-function display(times) {
+function display() {
     resize()
-    if(times <= 0) {
-        return
-    }
     dctx.fillStyle = 'black'
-    var linetemp = 20
+    var linetemp = (rwidth/300 + rheight/300)
     dctx.lineWidth = linetemp
 
-    dctx.setTransform(size,0,0,size,0,0)
-    dctx.translate(coords[0],coords[1])
-
-    dctx.clearRect(0, 0, rwidth, rheight)
+    dctx.setTransform(size,0,0,size,dwidth/2,dheight/2)
+    dctx.translate(coords[0], coords[1])
     dctx.strokeRect(linetemp/2*-1, linetemp/2*-1, rwidth+linetemp, rheight+linetemp)
     dctx.drawImage(rcanvas, 0, 0)
 }
+
 
 // change size (setTransform)
 var changesizeby = 2
 document.querySelector('#sizeL').addEventListener('click', (e) => {
     size = size*changesizeby
-    display();
+    display()
 })
 document.querySelector('#sizeS').addEventListener('click', (e) => {
     size = size/changesizeby
-    display();
+    display()
 })
 
 // change movement (translate)
@@ -156,8 +160,9 @@ document.querySelector('#moveD').addEventListener('click', (e) => {
 window.addEventListener("wheel", (e) => {
     passive: true;
     // e.preventDefault()
-    coords[0] += e.deltaX
-    coords[1] += e.deltaY
+
+    coords[0] -= e.deltaX/(size*1.5)
+    coords[1] -= e.deltaY/(size*1.5)
     display()
 });
 
@@ -203,26 +208,18 @@ var mouseY = [];
 var mouseState = 0;
 var mouseStateLock = 0;
 window.addEventListener('mousemove', (e) => {
-
+    // uncomment and change mousemove to mousedown for testing (also comment out mousedown)
     // inptwidth = document.querySelector('#inptwidth').value;
     // stamp('circle', inptwidth);
 
     // mouseState = 1;
     //
-    mouseX[0] = ((e.clientX*(size/size/size)*ogsize)-coords[0])
-    mouseY[0] = ((e.clientY*(size/size/size)*ogsize)-coords[1])
-    // console.log("A::" + (e.clientX))
-    // console.log("B::" + mouseX[0])
-
-
-    // for (var i=3;i>0;i--) {
-    //     mouseX[i] = mouseX[i-1];
-    //     mouseY[i] = mouseY[i-1];
-    // }
-    // console.log(mouseX);
+    mouseX[0] = ((e.clientX*(1/size)*ogsize)-coords[0])-((dwidth/2)/size)
+    mouseY[0] = ((e.clientY*(1/size)*ogsize)-coords[1])-((dheight/2)/size)
 
     if(mouseState == 1 && mouseStateLock == 0) {
         draw();
+        display();
     }
 
     mouseX[1] = mouseX[0];
@@ -230,9 +227,7 @@ window.addEventListener('mousemove', (e) => {
     
 })
 window.addEventListener('mousedown', (e) => {
-
-    nextline[0] = mouseX[0];
-    nextline[1] = mouseY[0];
+    mouseRefresh()
 
     if(mouseStateLock == 0) {
         inptwidth = document.querySelector('#inptwidth').value;
@@ -240,23 +235,62 @@ window.addEventListener('mousedown', (e) => {
         mouseState = 1
     }
 })
+
+// undoredo stuff
+var undoredo = [];
+var udrdtrack = 0;
+undoredo[0] = rctx.getImageData(0, 0, rwidth, rheight);
+var udrdcap = 0;
 window.addEventListener('mouseup', (e) => {
+    mouseRefresh()
+
     if(mouseStateLock == 0) {
         mouseState = 0
+        udrdrecord()
+        setDataURL()
     }
 })
 
+function mouseRefresh() {
+    mouseX[0] = ((event.clientX*(1/size)*ogsize)-coords[0])-((dwidth/2)/size)
+    mouseY[0] = ((event.clientY*(1/size)*ogsize)-coords[1])-((dheight/2)/size)
+    mouseX[1] = mouseX[0];
+    mouseY[1] = mouseY[0];
+    nextline[0] = mouseX[0];
+    nextline[1] = mouseY[0];
+}
+
+function udrdrecord() {
+    // record undoredo
+    udrdtrack++
+    undoredo[udrdtrack] = rctx.getImageData(0, 0, rwidth, rheight);
+    udrdcap = udrdtrack
+}
+
+document.querySelector('#undoR').addEventListener('click', (e) => {
+    if (udrdtrack <= 0) { flash('#undoR'); return; }
+    udrdtrack--
+    rctx.putImageData(undoredo[udrdtrack], 0, 0)
+    display()
+})
+document.querySelector('#redoU').addEventListener('click', (e) => {
+    if (udrdtrack >= udrdcap) { flash('#redoU'); return; }
+    udrdtrack++
+    rctx.putImageData(undoredo[udrdtrack], 0, 0)
+    display()
+})
+function flash(el) {
+    el = document.querySelector(el)
+    el.style.animation = 'none';
+    el.offsetHeight;
+    el.style.animation = 'undoredo 0.5s 1 paused';
+    el.style.animationPlayState = 'running';
+}
 
 // resize
-var resizestore;
-resizestore = rctx.getImageData(0, 0, dwidth, dheight);
 window.addEventListener('resize', (e) => {
-    // resizestore = rctx.getImageData(0, 0, dwidth, dheight);
-    // resize();
-    // rctx.putImageData(resizestore, 0, 0);
     display();
 })
-
 rcanvas.width = rwidth;
 rcanvas.height = rheight;
 function resize() {
@@ -266,11 +300,71 @@ function resize() {
     dcanvas.height = dheight;
 }
 
+// create blob and convert to dataURL
+function setDataURL() {
+    rcanvas.convertToBlob().then((blob) => {
+        dataURL = URL.createObjectURL(blob)
+        document.querySelector('#dwld').setAttribute('href', dataURL)
+        document.querySelector('#dwld2').setAttribute('href', dataURL)
+        // document.querySelector('#dwld2').setAttribute('download', dataURL)
+    });
+}
+
+var fileurl = 0;
+document.querySelector('#import').addEventListener('click', (e) => {
+    if(fileurl == 0) {
+        importfile = document.querySelector('#importfile').files[0]
+        image = new Image()
+        const reader = new FileReader()
+        reader.readAsDataURL(importfile)
+        reader.addEventListener('loadend', (e) => {
+            image.src = reader.result
+            rctx.drawImage(image, 0, 0)
+            display()
+        })
+    } else if (fileurl == 1) {
+        importurl = document.querySelector('#importurl').value
+        image = new Image()
+        request = new Request(importurl)
+
+        window.fetch(request).then(response => {
+            if (!response.ok) {
+              throw new Error(`HTTP error! Status: ${response.status}`);
+            }
+            return response.blob();
+        })
+        .then((response) => {
+            image.src = URL.createObjectURL(response);
+        });
+
+        // image.src = importurl
+        rctx.drawImage(image, 0, 0)
+        udrdrecord()
+        setDataURL()
+        display()
+    }
+
+})
+document.querySelector('#fileurl').addEventListener('click', (e) => {
+    if(fileurl == 0) {
+        fileurl = 1
+        document.querySelector('#importfile').toggleAttribute('hidden')
+        document.querySelector('#importurl').toggleAttribute('hidden')
+    } else if (fileurl == 1) {
+        fileurl = 0
+        document.querySelector('#importfile').toggleAttribute('hidden')
+        document.querySelector('#importurl').toggleAttribute('hidden')
+    }
+})
+
+
 
 // clear everything
 function trash() {
-    rctx.clearRect(0, 0, dwidth, dheight);
-    display();
+    rctx.clearRect(0, 0, rwidth, rheight);
+    udrdrecord()
+    setDataURL()
+    display()
 }
 
 function drawoff() {

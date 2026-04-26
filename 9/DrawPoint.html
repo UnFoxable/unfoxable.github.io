@@ -13,7 +13,8 @@
     <!-- <canvas id="referenceimg"></canvas> -->
     <canvas id="displayimg"></canvas>
   </div>
-  <div class="tools" id="toolbar" onmouseout="drawOn()" onmouseover="drawoff()">
+  <!-- <content> -->
+  <div id="toolbar" onmouseout="drawOn()" onmouseover="drawoff()">
 
     <span>
       <input class="item input" id="pickcolour" value="#ffffff" type="color">
@@ -22,27 +23,33 @@
 
     <input class="item num" id="inptwidth" value="3" type="number">
     
-    <span>
-      <label for="dwld" class="item">Download
-        <a href="" id="dwld" download>item</a>
-      </label>
+    <span class="item">
+      <a class="sized" id="dwld" target="_blank" href="">open</a>
+      <a class="sized" id="dwld2" href="" download>Download</a>
     </span>
 
-    <button class="item" id="import">Import*</button>
+    <span class="item">
+      <button class="sized" id="import">Import</button>
+      <button class="sized" id="fileurl">File/URL</button>
+      <input class="sized" id="importfile" type="file" accept=".png,.jpg,.jpeg">
+      <input class="sized" hidden id="importurl" type="url" size="10">
+    </span>
 
     <span>
       <label class="item" for="smthtype">Smooth
-        <input class="item" id="smthtype" type="range" min="0" max="2" value="0">
+        <input class="item" id="smthtype" type="range" min="0" max="3" value="0">
       </label>
     </span>
 
     <button class="item" id="clear" onclick="trash()">Clear</button>
+    
     <span class="item">
       <label class="sized" for="size">Size</label>
       <!-- <input class="sized" id="size" type="range" min="1" max="5" value="3"> -->
       <button class="sized" id="sizeS">-</button>
       <button class="sized" id="sizeL">+</button>
     </span>
+
     <span class="item">
       <label class="sized" for="movement">Move</label>
       <!-- <input class="sized" id="size" type="range" min="1" max="5" value="3"> -->
@@ -52,23 +59,29 @@
       <button class="sized" id="moveD">&#129035;</button>
     </span>
 
+    <span class="item">
+      <label class="sized" for="undoredo">Undo/Redo</label>
+      <!-- <input class="sized" id="size" type="range" min="1" max="5" value="3"> -->
+      <button class="sized" id="undoR">&#129032;</button>
+      <button class="sized" id="redoU">&#129034;</button>
+    </span>
+
   </div>
+  <!-- </content> -->
 <script src="./Javascript9.js" type="text/javascript"></script>
 </body>
 </html>
 
 <!--
 TODO:
-Add undo/redo button
-Add import button
-Finish download button logic
 Add compatibility for mobile/touchscreen devices
 Touch up on button CSS
 
-Add save button [tbd](to save to db)
+Add upload button [tbd](to save to db)
 Make website
 
 Optional:
+Add tool for making straight lines
 Add stamping logic
 Add different brush types
 Make a tutorial [tbd]
