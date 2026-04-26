@@ -7,8 +7,8 @@ console.log(rctx.getContextAttributes());
 
 rctx.imageSmoothingEnabled = true;
 
-const rwidth = 1000;
-const rheight = 1000;
+const rwidth = 2000;
+const rheight = 2000;
 var ogsize = 1;
 resize();
 
@@ -97,8 +97,6 @@ window.addEventListener('keydown', function (e) {
         ogsize--
     }
     
-    resize()
-    // rctx.putImageData(resizestore, 0, 0);
     display()
 })
 
@@ -109,11 +107,21 @@ var coords = [];
 coords[0] = 0;
 coords[1] = 0;
 display();
-function display() {
-    dctx.clearRect(0, 0, rwidth, rheight);
-    dctx.setTransform(size,0,0,size,0,0);
-    dctx.translate(coords[0],coords[1]);
-    dctx.drawImage(rcanvas, 0, 0);
+function display(times) {
+    resize()
+    if(times <= 0) {
+        return
+    }
+    dctx.fillStyle = 'black'
+    var linetemp = 20
+    dctx.lineWidth = linetemp
+
+    dctx.setTransform(size,0,0,size,0,0)
+    dctx.translate(coords[0],coords[1])
+
+    dctx.clearRect(0, 0, rwidth, rheight)
+    dctx.strokeRect(linetemp/2*-1, linetemp/2*-1, rwidth+linetemp, rheight+linetemp)
+    dctx.drawImage(rcanvas, 0, 0)
 }
 
 // change size (setTransform)
@@ -145,6 +153,13 @@ document.querySelector('#moveD').addEventListener('click', (e) => {
     coords[1] -= speed
     display()
 })
+window.addEventListener("wheel", (e) => {
+    passive: true;
+    // e.preventDefault()
+    coords[0] += e.deltaX
+    coords[1] += e.deltaY
+    display()
+});
 
 
 var smthtype = 0;
@@ -186,6 +201,7 @@ function circle(size) {
 var mouseX = [];
 var mouseY = [];
 var mouseState = 0;
+var mouseStateLock = 0;
 window.addEventListener('mousemove', (e) => {
 
     // inptwidth = document.querySelector('#inptwidth').value;
@@ -205,7 +221,7 @@ window.addEventListener('mousemove', (e) => {
     // }
     // console.log(mouseX);
 
-    if(mouseState == 1) {
+    if(mouseState == 1 && mouseStateLock == 0) {
         draw();
     }
 
@@ -214,16 +230,20 @@ window.addEventListener('mousemove', (e) => {
     
 })
 window.addEventListener('mousedown', (e) => {
-    inptwidth = document.querySelector('#inptwidth').value;
-    stamp('circle', inptwidth);
 
     nextline[0] = mouseX[0];
     nextline[1] = mouseY[0];
 
-    mouseState = 1;
+    if(mouseStateLock == 0) {
+        inptwidth = document.querySelector('#inptwidth').value;
+        stamp('circle', inptwidth);
+        mouseState = 1
+    }
 })
 window.addEventListener('mouseup', (e) => {
-    mouseState = 0;
+    if(mouseStateLock == 0) {
+        mouseState = 0
+    }
 })
 
 
@@ -232,14 +252,14 @@ var resizestore;
 resizestore = rctx.getImageData(0, 0, dwidth, dheight);
 window.addEventListener('resize', (e) => {
     // resizestore = rctx.getImageData(0, 0, dwidth, dheight);
-    resize();
+    // resize();
     // rctx.putImageData(resizestore, 0, 0);
     display();
 })
 
 rcanvas.width = rwidth;
 rcanvas.height = rheight;
-function resize(putdata) {
+function resize() {
     dwidth = dcanvas.clientWidth*ogsize;
     dheight = dcanvas.clientHeight*ogsize;
     dcanvas.width = dwidth;
@@ -254,5 +274,8 @@ function trash() {
 }
 
 function drawoff() {
-    //smh make it so tht mousestate is constantly 0, refer to mousedown
+    mouseStateLock = 1
+}
+function drawOn() {
+    mouseStateLock = 0
 }
