@@ -94,9 +94,17 @@
     background-color: rgba(255,255,255,0.5);
     animation: undoredo 0.3s 1 paused;
 }
+#fill {
+    background-color: rgba(255,255,255,0.5);
+    animation: undoredo 0.3s 1 paused;
+}
 @keyframes undoredo {
     0% {background-color:rgba(255,255,255,0.5);}
     20%{background-color:rgba(218, 11, 11, 0.5);}
     80%{background-color:rgba(218, 11, 11, 0.5);}
     100% {background-color:rgba(255,255,255,0.5);}
+}
+
+html {
+    cursor: auto;
 }

@@ -7,8 +7,8 @@ console.log(rctx.getContextAttributes());
 
 rctx.imageSmoothingEnabled = true;
 
-const rwidth = 2000;
-const rheight = 2000;
+const rwidth = 500;
+const rheight = 500;
 var ogsize = 1;
 resize();
 
@@ -121,6 +121,7 @@ function display() {
     var linetemp = (rwidth/300 + rheight/300)
     dctx.lineWidth = linetemp
 
+    dctx.clearRect(0, 0, rwidth, rheight)
     dctx.setTransform(size,0,0,size,dwidth/2,dheight/2)
     dctx.translate(coords[0], coords[1])
     dctx.strokeRect(linetemp/2*-1, linetemp/2*-1, rwidth+linetemp, rheight+linetemp)
@@ -229,6 +230,12 @@ window.addEventListener('mousemove', (e) => {
 window.addEventListener('mousedown', (e) => {
     mouseRefresh()
 
+    if(fillstarttrack == 1) {
+        fillstarttrack = 0;
+        document.documentElement.style.cursor = 'auto'
+        fillbegin()
+    }
+
     if(mouseStateLock == 0) {
         inptwidth = document.querySelector('#inptwidth').value;
         stamp('circle', inptwidth);
@@ -321,6 +328,8 @@ document.querySelector('#import').addEventListener('click', (e) => {
             image.src = reader.result
             rctx.drawImage(image, 0, 0)
             display()
+            udrdrecord()
+            setDataURL()
         })
     } else if (fileurl == 1) {
         importurl = document.querySelector('#importurl').value
@@ -340,19 +349,10 @@ document.querySelector('#import').addEventListener('click', (e) => {
                 image.src = reader.result
                 rctx.drawImage(image, 0, 0)
                 display()
+                udrdrecord()
+                setDataURL()
             })
         });
-
-        // image.src = importurl
-        // rctx.drawImage(image, 0, 0)
-        // udrdrecord()
-        // setDataURL()
-        // display()
-            // image.src = URL.createObjectURL(response);
-            // rctx.drawImage(image, 0, 0)
-            // udrdrecord()
-            // setDataURL()
-            // display()
     }
 
 })
@@ -368,7 +368,130 @@ document.querySelector('#fileurl').addEventListener('click', (e) => {
     }
 })
 
+//fill tool
+var fillstarttrack = 0;
+document.querySelector('#fill').addEventListener('click', (e) => {
+    if (fillstarttrack == 1) { flash('#fill'); return; }
 
+    imgDat = rctx.getImageData(0, 0, rwidth, rheight)
+    imgCopy = rctx.getImageData(0, 0, rwidth, rheight)
+
+    //Sobel Operator
+    var m = 0;
+    var SobelOpx = [];
+    var SobelOpy = [];
+    for (var j=0;j<rheight*4;j++) {
+        for (var i=0;i<rwidth*4;i++) {
+            
+            var rgbcolor = '';
+            SobelOpx[9] = 0; SobelOpx[10] = 0; SobelOpx[11] = 0;
+            SobelOpy[9] = 0; SobelOpy[10] = 0; SobelOpy[11] = 0;
+            
+            var SobelValue1 = 1;
+            var SobelValue2 = 2;
+
+            for (var rgb=0;rgb<2;rgb++) {
+                if (rgb == 0) { rgbcolor = 'R'}
+                else if (rgb == 1) { rgbcolor = 'G'}
+                else if (rgb == 2) { rgbcolor = 'B'};
+
+                SobelIteration(SobelOpx, imgCopy, m, rwidth, rgbcolor, -1, 0, +1,-2, 0, +2, -1, 0, +1)
+                SobelIteration(SobelOpy, imgCopy, m, rwidth, rgbcolor, -1, -2, -1, 0, 0, 0, 1, 2, 1)
+
+                for (var p=0;p<=8;p++) {
+                    SobelOpx[9+rgb] += SobelOpx[p];
+                    SobelOpy[9+rgb] += SobelOpy[p];
+                }
+            }
+
+            var SobelCalc = []
+            for (var rgb=0;rgb<2;rgb++) {
+                SobelCalc[rgb] = 0;
+                SobelOpx[9+rgb] = Math.ceil(SobelOpx[9+rgb]/3);
+                SobelOpy[9+rgb] = Math.ceil(SobelOpy[9+rgb]/3);
+                SobelCalc[rgb] = Math.sqrt( Math.pow(SobelOpx[9+rgb], 2) + Math.pow(SobelOpy[9+rgb], 2) )
+            }
+            SobelCalc[4] = 0
+            for (var rgb=0;rgb<2;rgb++) {
+                SobelCalc[4] += Math.sqrt( Math.pow(SobelOpx[9+rgb], 2) + Math.pow(SobelOpy[9+rgb], 2) )
+            }
+            imgDat = changeImageDatapx(imgDat, m, SobelCalc[4], SobelCalc[4], SobelCalc[4], 255)
+            // Coloured option rather than white
+            // imgDat = changeImageDatapx(imgDat, m, SobelCalc[0], SobelCalc[1], SobelCalc[2], 255)
+
+            
+
+            m += 4
+        }
+    }
+    document.documentElement.style.cursor = 'crosshair'
+    fillstarttrack = 1;
+
+    rctx.clearRect(0, 0, rwidth, rheight)
+    dctx.clearRect(0, 0, rwidth, rheight)
+
+    rctx.putImageData(imgDat, 0, 0)
+    display()
+    udrdrecord()
+    setDataURL()
+})
+
+function SobelIteration(SobelOp, imgCopy, m, rwidth, rgbcolor, A1, A2, A3, B1, B2, B3, C1, C2, C3) {
+        //first row
+        SobelOp[0] = getImageDatapx(imgCopy, m-rwidth*4-1, rgbcolor)*A1
+        SobelOp[1] = getImageDatapx(imgCopy, m-rwidth*4, rgbcolor)*A2
+        SobelOp[2] = getImageDatapx(imgCopy, m-rwidth*4+1, rgbcolor)*A3
+
+        //second row
+        SobelOp[3] = getImageDatapx(imgCopy, m-1, rgbcolor)*B1
+        SobelOp[4] = getImageDatapx(imgCopy, m, rgbcolor)*B2
+        SobelOp[5] = getImageDatapx(imgCopy, m+1, rgbcolor)*B3
+
+        //third row
+        SobelOp[6] = getImageDatapx(imgCopy, m+rwidth*4-1, rgbcolor)*C1
+        SobelOp[7] = getImageDatapx(imgCopy, m+rwidth*4, rgbcolor)*C2
+        SobelOp[8] = getImageDatapx(imgCopy, m+rwidth*4+1, rgbcolor)*C3
+}
+
+//gets the pixel parameters per image data
+function getImageDatapx(imgDat, m, type) {
+    switch (type) {
+        case 'R':
+            m += 0
+            return imgDat.data[m]
+        case 'G':
+            m += 1
+            return imgDat.data[m]
+        case 'B':
+            m += 2
+            return imgDat.data[m]
+        case 'A':
+            m += 3
+            return imgDat.data[m]
+        default:
+            return false;
+    }
+}
+
+//changes the pixel parameters per image data
+function changeImageDatapx(imgDat, m, R, G, B, A) {
+    imgDat.data[m] = R; // Red
+    m++
+    imgDat.data[m] = G; // Green
+    m++
+    imgDat.data[m] = B; // Blue
+    m++
+    imgDat.data[m] = A; // Alpha/Transparency
+    m++
+    return imgDat;
+}
+
+function fillbegin() {
+    //get the mouse pos.then/
+    //Make 2 options:
+    //flood fill tht uses color fill to fill in an area
+    //flood fill tht uses the edge detection to fill an area
+}
 
 // clear everything
 function trash() {
